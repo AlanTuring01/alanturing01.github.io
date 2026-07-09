@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="信号丢失" description="404 · 页面不存在。">
+  <div class="container lost">
+    <p class="num code" aria-hidden="true">4<span class="beacon"></span>4</p>
+    <h1>信号丢失</h1>
+    <p>这片海域没有航标——你要找的页面不存在，或者已经漂走了。</p>
+    <p class="actions">
+      <a class="btn btn-primary" href="/">返回星港</a>
+      <a class="btn btn-ghost" href="/posts/">去读文字</a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .lost {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-block: 4rem;
+  }
+
+  .code {
+    display: flex;
+    align-items: center;
+    gap: 0.18em;
+    font-size: clamp(4rem, 14vw, 8rem);
+    font-weight: 700;
+    color: var(--text-0);
+    margin: 0;
+    line-height: 1;
+  }
+
+  .beacon {
+    width: 0.62em;
+    height: 0.62em;
+    border-radius: 6px;
+    background: var(--aurora);
+    transform: rotate(45deg);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(67, 233, 192, 0.4); }
+    50% { box-shadow: 0 0 24px 4px rgba(67, 233, 192, 0.4); }
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+</style>

@@ -1,0 +1,370 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { ymdSlash } from '../utils/date';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+
+const heroChars = ['杨', '坤', '的', '博', '客'];
+
+const tiles = [
+  { href: '/posts/', label: '文字', en: 'WRITING', d: 'M4 6h16M4 12h16M4 18h10' },
+  { href: '/gallery/', label: '相册', en: 'GALLERY', d: 'M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6' },
+  { href: '/videos/', label: '视频', en: 'VIDEOS', d: 'M3 5h18v14H3zM10 9l6 3-6 3z' },
+  { href: '/guestbook/', label: '留言板', en: 'GUESTBOOK', d: 'M21 12a8 8 0 0 1-8 8H3l2-4a8 8 0 1 1 16-4z' },
+  { href: '/friends/', label: '友链', en: 'FRIENDS', d: 'M9 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM3 21a6 6 0 0 1 12 0M16 4.5a4 4 0 0 1 0 7M15 15.5a6 6 0 0 1 6 5.5' },
+  { href: '/about/', label: '关于', en: 'ABOUT', d: 'M12 21a9 9 0 1 0-9-9 9 9 0 0 0 9 9zM12 8h.01M11 12h1v5h1' },
+];
+---
+
+<Base>
+  <section class="hero" aria-label="欢迎">
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="stars" aria-hidden="true"></div>
+    <div class="container hero-content">
+      <p class="eyebrow hero-line">HELLO, SAILOR OF DEEP SPACE</p>
+      <h1 class="hero-title" lang="zh-CN">
+        {
+          heroChars.map((ch, i) => (
+            <span class:list={['hero-char', { 'aurora-text': i < 2 }]}>
+              {ch}
+            </span>
+          ))
+        }
+      </h1>
+      <p class="hero-sub hero-line">
+        深空即深海，极光即航迹。<br />这里有随笔、相册、视频，和一点点理想主义。
+      </p>
+      <p class="hero-actions hero-line">
+        <a class="btn btn-primary" href="/posts/">读读文字</a>
+        <a class="btn btn-ghost" href="/gallery/">看看相册</a>
+      </p>
+    </div>
+    <a class="scroll-hint" href="#recent" aria-label="向下滚动">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 5v14M5 12l7 7 7-7"></path>
+      </svg>
+    </a>
+  </section>
+
+  <section id="recent" class="container section">
+    <p class="eyebrow reveal">RECENT WRITING</p>
+    <h2 class="heading-beacon reveal">最近随笔</h2>
+    <div class="post-cards stagger">
+      {
+        posts.map((post) => (
+          <a class="card post-card reveal" href={`/posts/${post.id}/`}>
+            <span class="num post-date">{ymdSlash(post.data.pubDate)}</span>
+            <h3>{post.data.title}</h3>
+            <p>{post.data.description}</p>
+            <span class="read-more">
+              阅读全文
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <hr class="signal-divider" />
+
+  <section class="container section">
+    <p class="eyebrow reveal">EXPLORE</p>
+    <h2 class="heading-beacon reveal">去处</h2>
+    <div class="tiles stagger">
+      {
+        tiles.map((t) => (
+          <a class="card tile reveal" href={t.href}>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d={t.d} />
+            </svg>
+            <span class="tile-label">{t.label}</span>
+            <span class="eyebrow">{t.en}</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- 首屏 ---------- */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* 极光层：三个光斑 + 一条光带，单层大模糊，独立合成层 */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: -18%;
+    z-index: -3;
+    background:
+      radial-gradient(closest-side at 20% 30%, var(--hero-blob-1), transparent 65%),
+      radial-gradient(closest-side at 75% 20%, var(--hero-blob-2), transparent 65%),
+      radial-gradient(closest-side at 60% 75%, var(--hero-blob-3), transparent 65%),
+      conic-gradient(from 210deg at 50% 40%, transparent 0 40%, var(--hero-band) 47%, transparent 55%);
+    filter: blur(60px);
+    animation: aurora-drift 45s var(--ease-in-out) infinite alternate;
+    will-change: transform;
+  }
+
+  @keyframes aurora-drift {
+    to {
+      transform: translate3d(-4%, -3%, 0) rotate(6deg) scale(1.1);
+    }
+  }
+
+  /* 星尘噪点：内联 SVG feTurbulence，消除渐变 banding */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  /* 透视网格：仅中央隐约可见 */
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+  }
+
+  /* 星星：固定坐标 box-shadow 星场，6 颗闪烁 */
+  .stars {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+  }
+
+  .stars::before,
+  .stars::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .stars::before {
+    box-shadow:
+      8vw 12vh 0 rgba(238, 243, 250, 0.7), 21vw 32vh 0 rgba(238, 243, 250, 0.4),
+      33vw 8vh 0 rgba(238, 243, 250, 0.55), 47vw 22vh 0 rgba(238, 243, 250, 0.35),
+      58vw 15vh 0 rgba(238, 243, 250, 0.6), 69vw 35vh 0 rgba(238, 243, 250, 0.4),
+      81vw 10vh 0 rgba(238, 243, 250, 0.65), 92vw 28vh 0 rgba(238, 243, 250, 0.4),
+      13vw 55vh 0 rgba(238, 243, 250, 0.35), 27vw 68vh 0 rgba(238, 243, 250, 0.5),
+      44vw 60vh 0 rgba(238, 243, 250, 0.3), 55vw 75vh 0 rgba(238, 243, 250, 0.45),
+      70vw 62vh 0 rgba(238, 243, 250, 0.35), 87vw 70vh 0 rgba(238, 243, 250, 0.5),
+      95vw 50vh 0 rgba(238, 243, 250, 0.3), 5vw 82vh 0 rgba(238, 243, 250, 0.4),
+      38vw 88vh 0 rgba(238, 243, 250, 0.35), 62vw 90vh 0 rgba(238, 243, 250, 0.4),
+      76vw 84vh 0 rgba(238, 243, 250, 0.3), 16vw 40vh 0 rgba(238, 243, 250, 0.45);
+  }
+
+  .stars::after {
+    width: 3px;
+    height: 3px;
+    box-shadow:
+      25vw 18vh 0 rgba(140, 251, 222, 0.8), 66vw 25vh 0 rgba(238, 243, 250, 0.75),
+      50vw 45vh 0 rgba(140, 251, 222, 0.6), 85vw 42vh 0 rgba(238, 243, 250, 0.7),
+      10vw 66vh 0 rgba(140, 251, 222, 0.65), 40vw 78vh 0 rgba(238, 243, 250, 0.6);
+    animation: twinkle 4s ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle {
+    from { opacity: 1; }
+    to { opacity: 0.35; }
+  }
+
+  :global(:root[data-theme='light']) .stars {
+    opacity: 0.25;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    padding-block: 6rem;
+  }
+
+  .hero-title {
+    font-size: var(--fs-hero);
+    margin: 0.2em 0 0;
+    letter-spacing: 0.04em;
+  }
+
+  /* 逐字入场（ink 案嫁接：70ms 步进）；延迟由 CSS 规则给出，保持零内联样式 */
+  .hero-char {
+    display: inline-block;
+  }
+
+  .hero-content > .eyebrow { --d: 0; }
+  .hero-char:nth-child(1) { --d: 1; }
+  .hero-char:nth-child(2) { --d: 2; }
+  .hero-char:nth-child(3) { --d: 3; }
+  .hero-char:nth-child(4) { --d: 4; }
+  .hero-char:nth-child(5) { --d: 5; }
+  .hero-sub { --d: 7; }
+  .hero-actions { --d: 8; }
+
+  html.js .hero-char,
+  html.js .hero-line {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: rise 600ms var(--ease-out) forwards;
+    animation-delay: calc(var(--d, 0) * 70ms);
+  }
+
+  @keyframes rise {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .hero-sub {
+    max-width: 34em;
+    color: var(--text-1);
+    font-size: clamp(1rem, 0.95rem + 0.4vw, 1.2rem);
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 2rem;
+    translate: -50%;
+    color: var(--text-2);
+    background-image: none;
+    animation: bob 2.4s ease-in-out infinite;
+  }
+
+  .scroll-hint:hover {
+    color: var(--accent);
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero::before {
+      animation: none;
+    }
+
+    html.js .hero-char,
+    html.js .hero-line {
+      transform: none;
+      animation-duration: 0.01ms;
+    }
+  }
+
+  /* ---------- 区块 ---------- */
+  .section {
+    padding-block: 3.5rem 1rem;
+  }
+
+  .post-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.1rem;
+    margin-top: 1.8rem;
+  }
+
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.4rem 1.5rem;
+    color: var(--text-1);
+    background-image: none;
+  }
+
+  .post-card h3 {
+    margin: 0;
+    transition: color var(--t-fast) var(--ease-out);
+  }
+
+  .post-card:hover h3 {
+    color: var(--accent);
+  }
+
+  .post-card p {
+    margin: 0;
+    font-size: var(--fs-small);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .post-date {
+    font-size: var(--fs-tiny);
+    color: var(--text-2);
+    letter-spacing: 0.08em;
+  }
+
+  .read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    margin-top: auto;
+    padding-top: 0.6rem;
+    font-size: var(--fs-small);
+    color: var(--accent);
+  }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-block: 1.8rem 3rem;
+  }
+
+  .tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1.3rem 1.4rem;
+    color: var(--text-1);
+    background-image: none;
+  }
+
+  .tile svg {
+    color: var(--accent);
+  }
+
+  .tile-label {
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    color: var(--text-0);
+  }
+</style>

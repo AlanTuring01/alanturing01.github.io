@@ -1,0 +1,213 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+
+import p1 from '../assets/gallery/photo-01.webp';
+import p2 from '../assets/gallery/photo-02.webp';
+import p3 from '../assets/gallery/photo-03.webp';
+import p4 from '../assets/gallery/photo-04.webp';
+import p5 from '../assets/gallery/photo-05.webp';
+import p6 from '../assets/gallery/photo-06.webp';
+import p7 from '../assets/gallery/photo-07.webp';
+import p8 from '../assets/gallery/photo-08.webp';
+import p9 from '../assets/gallery/photo-09.webp';
+
+const photos = [
+  { src: p1, caption: '街头烟火', alt: '深夜的一大盘烤串与炸物' },
+  { src: p2, caption: '深夜路口', alt: '夜晚的街道路口，交警仍在执勤' },
+  { src: p3, caption: '朱门石狮', alt: '中式府邸大门前的一对石狮' },
+  { src: p4, caption: '街角商圈', alt: '商场外立面与驶过的出租车' },
+  { src: p5, caption: '玻璃盒子', alt: '玻璃幕墙的 Apple Store 门店' },
+  { src: p6, caption: '街边咖啡', alt: '星巴克臻选门店外观' },
+  { src: p7, caption: '暮色万象', alt: '暮色里的商场与亮起的珠宝橱窗' },
+  { src: p8, caption: '长街灯河', alt: '夜晚的城市主干道与两旁高楼' },
+  { src: p9, caption: '光的舞台', alt: '商场中庭被紫色灯光笼罩的舞台' },
+];
+---
+
+<Base title="相册" description="浮光掠影——杨坤的相册。">
+  <div class="container page-head stagger">
+    <p class="eyebrow reveal">GALLERY</p>
+    <h1 class="heading-beacon reveal">相册</h1>
+    <p class="reveal">浮光掠影。</p>
+  </div>
+
+  <div class="container">
+    <ul class="grid stagger-3" role="list">
+      {
+        photos.map((photo, i) => (
+          <li class="reveal">
+            <button
+              class="shot card"
+              data-full={photo.src.src}
+              data-caption={photo.caption}
+              data-alt={photo.alt}
+              aria-label={`查看大图：${photo.caption}`}
+            >
+              <Image src={photo.src} alt={photo.alt} width={720} widths={[400, 720]} sizes="(max-width: 700px) 50vw, 33vw" loading={i < 3 ? 'eager' : 'lazy'} />
+              <span class="caption" aria-hidden="true">{photo.caption}</span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <dialog id="lightbox" aria-label="大图预览">
+    <button id="lightbox-close" class="close" aria-label="关闭">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18"></path>
+      </svg>
+    </button>
+    <figure>
+      <img id="lightbox-img" src="" alt="" />
+      <figcaption id="lightbox-caption" class="eyebrow"></figcaption>
+    </figure>
+  </dialog>
+</Base>
+
+<style>
+  .page-head {
+    padding-block: 4rem 1.5rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    list-style: none;
+    margin: 0 0 3rem;
+    padding: 0;
+  }
+
+  @media (max-width: 700px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .shot {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 1px solid var(--glass-border-c);
+    cursor: zoom-in;
+    overflow: hidden;
+    background-color: var(--bg-2);
+  }
+
+  .shot img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    transition: transform var(--t-slow) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .shot:hover img {
+      transform: scale(1.05);
+    }
+
+    .shot .caption {
+      transform: translateY(110%);
+    }
+
+    .shot:hover .caption {
+      transform: translateY(0);
+    }
+  }
+
+  .caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1.6rem 1rem 0.7rem;
+    color: #eef3fa;
+    font-size: var(--fs-small);
+    letter-spacing: 0.1em;
+    text-align: left;
+    background: linear-gradient(transparent, rgba(6, 10, 18, 0.75));
+    transition: transform var(--t-base) var(--ease-out);
+  }
+
+  /* 原生 dialog 灯箱 */
+  dialog {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    max-width: min(94vw, 1200px);
+  }
+
+  dialog::backdrop {
+    background: rgba(6, 10, 18, 0.82);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  dialog figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  dialog img {
+    max-width: 100%;
+    max-height: 84vh;
+    border-radius: var(--r-m);
+    box-shadow: var(--shadow-1);
+  }
+
+  .close {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(6, 10, 18, 0.5);
+    color: #eef3fa;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+
+  .close:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  function initLightbox() {
+    const dialog = document.getElementById('lightbox') as HTMLDialogElement | null;
+    if (!dialog || dialog.dataset.bound) return;
+    dialog.dataset.bound = '1';
+    const img = document.getElementById('lightbox-img') as HTMLImageElement;
+    const cap = document.getElementById('lightbox-caption')!;
+
+    document.querySelectorAll<HTMLButtonElement>('.shot').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        img.src = btn.dataset.full ?? '';
+        img.alt = btn.dataset.alt ?? '';
+        cap.textContent = btn.dataset.caption ?? '';
+        dialog.showModal();
+      });
+    });
+
+    document.getElementById('lightbox-close')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+    dialog.addEventListener('close', () => {
+      img.src = '';
+    });
+  }
+
+  document.addEventListener('astro:page-load', initLightbox);
+</script>

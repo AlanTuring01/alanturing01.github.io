@@ -1,0 +1,77 @@
+---
+import Base from '../layouts/Base.astro';
+import poster1 from '../assets/poster-1.webp';
+import poster2 from '../assets/poster-2.webp';
+import poster3 from '../assets/poster-3.webp';
+
+const videos = [
+  { src: '/video/1.mp4', poster: poster1.src, title: 'CS 高光 · 炙热沙城 Ⅰ' },
+  { src: '/video/2.mp4', poster: poster2.src, title: 'CS 高光 · 炙热沙城 Ⅱ' },
+  { src: '/video/3.mp4', poster: poster3.src, title: 'CS 高光 · 炙热沙城 Ⅲ' },
+];
+---
+
+<Base title="视频" description="杨坤的视频片段。">
+  <div class="container page-head stagger">
+    <p class="eyebrow reveal">VIDEOS</p>
+    <h1 class="heading-beacon reveal">视频</h1>
+    <p class="reveal">一些动起来的记忆。点击播放才会加载，流量安心。</p>
+  </div>
+
+  <div class="container">
+    <ul class="video-list stagger" role="list">
+      {
+        videos.map((v, i) => (
+          <li class="card video-card reveal">
+            <video controls preload="none" poster={v.poster} width="1280" height="720">
+              <source src={v.src} type="video/mp4" />
+              您的浏览器不支持 video 元素。
+            </video>
+            <p class="video-title">
+              <span class="num eyebrow">{String(i + 1).padStart(2, '0')}</span>
+              {v.title}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .page-head {
+    padding-block: 4rem 1.5rem;
+  }
+
+  .video-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0 0 3rem;
+    padding: 0;
+  }
+
+  .video-card {
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .video-card video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: var(--r-m) var(--r-m) 0 0;
+  }
+
+  .video-title {
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+    margin: 0;
+    padding: 0.9rem 1.2rem;
+    color: var(--text-0);
+    font-weight: 500;
+  }
+</style>

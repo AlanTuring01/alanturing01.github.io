@@ -1,0 +1,240 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import avatar from '../assets/avatar.webp';
+import wechat from '../assets/wechat.png';
+
+const interests = ['GTA 5 增强版', 'CS 2', '文明 7', '三国杀', '足球', 'Flower Dance', '交朋友'];
+---
+
+<Base title="关于" description="关于杨坤：上海海事大学人工智能专业，INTP，自由与理想主义者。">
+  <div class="container page-head stagger">
+    <p class="eyebrow reveal">ABOUT</p>
+    <h1 class="heading-beacon reveal">关于我</h1>
+  </div>
+
+  <div class="container about-grid">
+    <div class="portrait reveal">
+      <div class="ring">
+        <Image src={avatar} alt="杨坤的头像" width={480} loading="eager" />
+      </div>
+      <div class="orbit" aria-hidden="true"><i></i></div>
+    </div>
+
+    <div class="bio">
+      <h2 class="reveal">杨坤</h2>
+      <ul class="facts stagger" role="list">
+        <li class="reveal">上海海事大学 · 人工智能（211）</li>
+        <li class="reveal">INTP / 自由 / 理想主义者</li>
+        <li class="reveal">深空即深海，极光即航迹</li>
+        <li class="reveal">喜欢交朋友</li>
+      </ul>
+      <div class="tags-wall reveal">
+        {interests.map((t) => <span class="tag">{t}</span>)}
+      </div>
+
+      <div class="qr-flip reveal">
+        <button id="qr-card" class="qr-inner" aria-label="翻转查看微信二维码" aria-pressed="false">
+          <span class="face front card">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 11.5a6.5 5.5 0 0 1 6.5-5.4c3.4.1 6.3 2.6 6.4 5.5 0 1.7-.9 3.2-2.2 4.2l.6 2.2-2.4-1.2c-.8.2-1.6.4-2.5.4A6.6 6.6 0 0 1 9 11.5z"></path>
+              <path d="M15 11.6a8 8 0 0 0-7.6-9.1C3.7 2.3 1 5 1 8.2c0 1.9 1 3.5 2.4 4.6L2.8 15l2.6-1.3c.6.2 1.3.3 2 .4"></path>
+            </svg>
+            <span>加个微信？</span>
+            <span class="eyebrow">TAP TO FLIP</span>
+          </span>
+          <span class="face back card">
+            <Image src={wechat} alt="杨坤的微信二维码" width={320} />
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .page-head {
+    padding-block: 4rem 1rem;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(240px, 340px) 1fr;
+    gap: 3rem;
+    align-items: start;
+    padding-bottom: 3rem;
+  }
+
+  @media (max-width: 760px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* 极光环头像 + 轨道卫星 */
+  .portrait {
+    position: relative;
+    width: min(100%, 300px);
+    margin-inline: auto;
+    aspect-ratio: 1;
+  }
+
+  .ring {
+    position: absolute;
+    inset: 14px;
+    border-radius: 50%;
+    padding: 3px;
+    background: var(--aurora);
+  }
+
+  .ring img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid var(--bg-0);
+  }
+
+  .orbit {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px dashed var(--border-c);
+    animation: orbit 20s linear infinite;
+  }
+
+  .orbit i {
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  @keyframes orbit {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orbit {
+      animation: none;
+    }
+  }
+
+  .bio h2 {
+    font-size: var(--fs-h1);
+    margin-bottom: 0.3em;
+  }
+
+  .facts {
+    list-style: none;
+    margin: 0 0 1.4rem;
+    padding: 0;
+  }
+
+  .facts li {
+    position: relative;
+    padding-left: 1.3em;
+    margin-block: 0.55em;
+  }
+
+  .facts li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.75em;
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--aurora);
+    transform: rotate(45deg);
+  }
+
+  .tags-wall {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  /* 微信二维码翻转卡 */
+  .qr-flip {
+    perspective: 1000px;
+    width: min(100%, 300px);
+  }
+
+  .qr-inner {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 600ms var(--ease-in-out);
+  }
+
+  .qr-inner.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .face.front svg {
+    color: var(--accent);
+  }
+
+  .face.front span:nth-of-type(1) {
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    color: var(--text-0);
+  }
+
+  .face.back {
+    transform: rotateY(180deg);
+    background: #fff;
+    padding: 1rem;
+  }
+
+  .face.back img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .qr-inner {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  function initQr() {
+    const card = document.getElementById('qr-card');
+    if (!card || card.dataset.bound) return;
+    card.dataset.bound = '1';
+    card.addEventListener('click', () => {
+      const flipped = card.classList.toggle('flipped');
+      card.setAttribute('aria-pressed', String(flipped));
+    });
+  }
+
+  document.addEventListener('astro:page-load', initQr);
+</script>

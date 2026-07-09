@@ -1,0 +1,173 @@
+---
+import Base from '../layouts/Base.astro';
+
+const featured = [
+  {
+    text: '杨坤，好久没来看你了，居然搞了个博客，以后每天都会来逛逛的 : )',
+    from: '张三',
+    date: '2022/12/20',
+  },
+  {
+    text: '杨坤是谁？对盲人而言，他是视觉；对饥饿之人而言，他是厨师；对口渴之人而言，他便是水。我定赞同他的思想；我必倾听他之所言。如果杨坤只有一个粉丝，那便是我，如果杨坤没有粉丝，那我便不复存在。',
+    from: '一个匿名的粉丝',
+    date: '2022/12/20',
+  },
+  {
+    text: "Who is Kun? For the blind, He is the vision. For the hungry, He is the chef. For the thirsty, He is the water. If Kun thinks, I agree. If Kun speaks, I'm listening. If Kun has one fan, it is me. If Kun has no fans, I don't exist.",
+    from: 'Fans of Kun',
+    date: '2022/12/20',
+  },
+];
+---
+
+<Base title="留言板" description="留下你的足迹——杨坤的留言板。">
+  <div class="container page-head stagger">
+    <p class="eyebrow reveal">GUESTBOOK</p>
+    <h1 class="heading-beacon reveal">留言板</h1>
+    <p class="reveal">路过的信号，都值得被记录。</p>
+  </div>
+
+  <section class="container">
+    <h2 class="heading-beacon reveal">精选留言</h2>
+    <div class="quotes stagger">
+      {
+        featured.map((q) => (
+          <figure class="card quote reveal">
+            <span class="mark" aria-hidden="true">「</span>
+            <blockquote>{q.text}</blockquote>
+            <figcaption class="num">
+              —— {q.from} · {q.date}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+
+  <hr class="signal-divider" />
+
+  <section class="container-narrow comments">
+    <h2 class="heading-beacon reveal">写下新留言</h2>
+    <div id="giscus-slot">
+      <div class="card load-card reveal">
+        <p>
+          评论由 <a href="https://giscus.app" target="_blank" rel="noopener noreferrer">giscus</a> 驱动，数据存放在本站
+          GitHub 仓库的 Discussions 里。本站默认不加载任何第三方资源——点击下面的按钮即表示同意连接
+          <code>giscus.app</code> 并使用 GitHub 账号留言。
+        </p>
+        <button id="load-comments" class="btn btn-primary">加载评论区</button>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page-head {
+    padding-block: 4rem 1.5rem;
+  }
+
+  /* 瀑布式引用墙 */
+  .quotes {
+    columns: 3;
+    column-gap: 16px;
+    margin-block: 1.6rem 1rem;
+  }
+
+  @media (max-width: 900px) {
+    .quotes {
+      columns: 2;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .quotes {
+      columns: 1;
+    }
+  }
+
+  .quote {
+    break-inside: avoid;
+    margin: 0 0 16px;
+    padding: 1.3rem 1.4rem;
+  }
+
+  .mark {
+    display: block;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .quote blockquote {
+    margin: 0.4rem 0 0.8rem;
+    color: var(--text-0);
+    line-height: 1.8;
+  }
+
+  .quote figcaption {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+  }
+
+  .comments {
+    margin-bottom: 3rem;
+  }
+
+  .load-card {
+    padding: 1.4rem 1.6rem;
+    margin-top: 1.6rem;
+  }
+
+  .load-card p {
+    margin-top: 0;
+  }
+</style>
+
+<script>
+  function currentGiscusTheme() {
+    return document.documentElement.dataset.theme === 'light' ? 'noborder_light' : 'noborder_dark';
+  }
+
+  function initGiscus() {
+    const btn = document.getElementById('load-comments');
+    const slot = document.getElementById('giscus-slot');
+    if (!btn || !slot || slot.dataset.loaded) return;
+
+    btn.addEventListener('click', () => {
+      slot.dataset.loaded = '1';
+      slot.innerHTML = '';
+      const s = document.createElement('script');
+      s.src = 'https://giscus.app/client.js';
+      s.async = true;
+      s.crossOrigin = 'anonymous';
+      const attrs: Record<string, string> = {
+        'data-repo': 'AlanTuring01/alanturing01.github.io',
+        'data-repo-id': 'R_kgDOIpWNyA',
+        'data-category': 'Announcements',
+        'data-category-id': 'DIC_kwDOIpWNyM4CTc8n',
+        'data-mapping': 'specific',
+        'data-term': '留言板',
+        'data-strict': '0',
+        'data-reactions-enabled': '1',
+        'data-emit-metadata': '0',
+        'data-input-position': 'top',
+        'data-theme': currentGiscusTheme(),
+        'data-lang': 'zh-CN',
+      };
+      for (const [k, v] of Object.entries(attrs)) s.setAttribute(k, v);
+      slot.appendChild(s);
+    });
+  }
+
+  // 深浅主题切换时同步 giscus——模块级只绑一次，避免视图过渡下重复绑定
+  document.addEventListener('themechange', () => {
+    const frame = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+    frame?.contentWindow?.postMessage(
+      { giscus: { setConfig: { theme: currentGiscusTheme() } } },
+      'https://giscus.app'
+    );
+  });
+
+  document.addEventListener('astro:page-load', initGiscus);
+</script>

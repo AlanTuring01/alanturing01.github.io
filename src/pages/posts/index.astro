@@ -1,0 +1,159 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { dateParts } from '../../utils/date';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const byYear = new Map<string, typeof posts>();
+for (const post of posts) {
+  const y = dateParts(post.data.pubDate).y;
+  if (!byYear.has(y)) byYear.set(y, []);
+  byYear.get(y)!.push(post);
+}
+const years = [...byYear.keys()].sort((a, b) => Number(b) - Number(a));
+
+const md = (d: Date) => {
+  const { m, d: dd } = dateParts(d);
+  return `${m}.${dd}`;
+};
+---
+
+<Base title="文字" description="杨坤的随笔与文字，按时间流排列。">
+  <div class="container-narrow page-head stagger">
+    <p class="eyebrow reveal">WRITING</p>
+    <h1 class="heading-beacon reveal">文字</h1>
+    <p class="reveal">一些点滴，按时间倒序。</p>
+  </div>
+
+  <div class="container-narrow">
+    {
+      years.map((year) => (
+        <section class="year-group">
+          <h2 class="num year reveal" aria-label={`${year} 年`}>{year}</h2>
+          <ol class="post-list stagger">
+            {byYear.get(year)!.map((post) => (
+              <li class="reveal">
+                <a class="entry" href={`/posts/${post.id}/`}>
+                  <span class="num idx" aria-hidden="true"></span>
+                  <span class="date num">{md(post.data.pubDate)}</span>
+                  <span class="body">
+                    <span class="title">{post.data.title}</span>
+                    {post.data.description && <span class="desc">{post.data.description}</span>}
+                    {post.data.tags.length > 0 && (
+                      <span class="tags">
+                        {post.data.tags.map((t) => (
+                          <span class="tag">{t}</span>
+                        ))}
+                      </span>
+                    )}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  .page-head {
+    padding-block: 4rem 1rem;
+  }
+
+  .year-group {
+    margin-bottom: 2.5rem;
+  }
+
+  .year {
+    font-size: var(--fs-h2);
+    color: var(--text-2);
+    letter-spacing: 0.12em;
+    border-bottom: 1px solid var(--border-c);
+    padding-bottom: 0.35em;
+  }
+
+  /* editorial 案嫁接：CSS counter 编号索引 */
+  .post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: entry;
+  }
+
+  .post-list > li {
+    counter-increment: entry;
+  }
+
+  .entry {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1.1rem 0.5rem;
+    color: var(--text-1);
+    background-image: none;
+    border-bottom: 1px dashed var(--border-c);
+    transition: background-color var(--t-fast) var(--ease-out);
+  }
+
+  .entry:hover {
+    background-color: var(--code-bg);
+  }
+
+  .idx::before {
+    content: counter(entry, decimal-leading-zero);
+    font-size: var(--fs-tiny);
+    letter-spacing: 0.1em;
+    color: var(--text-2);
+  }
+
+  .date {
+    flex: none;
+    font-size: var(--fs-small);
+    color: var(--text-2);
+    letter-spacing: 0.08em;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .title {
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    color: var(--text-0);
+    transition: color var(--t-fast) var(--ease-out);
+  }
+
+  .entry:hover .title {
+    color: var(--accent);
+  }
+
+  .desc {
+    font-size: var(--fs-small);
+    color: var(--text-2);
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+  }
+
+  @media (max-width: 560px) {
+    .entry {
+      flex-wrap: wrap;
+      gap: 0.3rem 1rem;
+    }
+
+    .body {
+      width: 100%;
+    }
+  }
+</style>

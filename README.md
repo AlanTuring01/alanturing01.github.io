@@ -1,157 +1,56 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="all,follow">
-    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Cardo:400,400italic,700">
-    <link rel="stylesheet" href="vendor/lightbox2/css/lightbox.min.css">
-    <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
-    <link rel="stylesheet" href="css/custom.css">
-    <link rel="shortcut icon" href="img/favicon.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+SC:100,300,400,500,700,900">
-  </head>
-  <body>
-    <section id="intro" style="background-image: url('img/Bridge.png');" class="intro">
-      <div class="overlay"></div>
-      <div class="content">
-        <div class="container clearfix">
-          <div class="row">
-            <div class="col-lg-8 col-md-12 mx-auto">
-              <p style="font-family:Noto Sans SC;">欢迎您访问&nbsp;</p>
-              <h1 style="font-family:Noto Sans SC;">杨坤的博客&nbsp;</h1>
-				<br>
-              <p style="font-family:Noto Sans SC;">关于我的一些点滴。</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <header class="header">
-      <nav class="navbar navbar-expand-lg">
-        <div class="container"><a href="#intro" class="navbar-brand link-scroll" style="font-family:Noto Sans SC;">杨坤的博客</a>
-          <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler navbar-toggler-right"><i class="fa fa-bars"></i></button>
-          <div id="navbarSupportedContent" class="collapse navbar-collapse">
-			<audio controls loop="true">
-  			<source src="FlowerDance.mp3" type="audio/mpeg">
-			<source src="https://github.com/AlanTuring01/alanblog.github.io/tree/main/FlowerDance.mp3" type="video/mpeg" loop="-1">
-			</audio>
-			♫  DJ Okawari - Flower Dance
-            <ul class="navbar-nav ml-auto">
-              <li class="nav-item"><a href="#intro" class="nav-link link-scroll" style="font-family:Noto Sans SC;">首页</a></li>
-              <li class="nav-item"><a href="#about" class="nav-link link-scroll" style="font-family:Noto Sans SC;">关于我</a></li>
-              <li class="nav-item"><a href="#services" class="nav-link link-scroll" style="font-family:Noto Sans SC;">视频</a></li>
-              <li class="nav-item"><a href="#portfolio" class="nav-link link-scroll" style="font-family:Noto Sans SC;">相册</a></li>
-              <li class="nav-item"><a href="#text" class="nav-link link-scroll" style="font-family:Noto Sans SC;">文字</a></li>
-              <li class="nav-item"><a href="#contact" class="nav-link link-scroll" style="font-family:Noto Sans SC;">留言板</a></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </header>
-    <section id="about" class="text">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-6">
-            <h2 class="heading">关于我</h2>
-            <h3 style="font-family:Noto Sans SC;color:red;font-size:25px;">&nbsp; &nbsp; 杨坤</h3>
-            <ul style="font-family:Noto Sans SC;">
-			<li>上海海事大学<br>人工智能 211</li>
-  			<li>INTP / 自由 / 理想主义者</li>
-			<li>GTA 5 / CS : GO / 文明 6 / 三国杀</li>
-			<li>喜欢交朋友</li>
-			<li><a href="img/WechatQRCode.png" style="font-family:Noto Sans SC;color:blue;">微信二维码</a></li>
-			</ul>
-          </div>
-          <div class="col-lg-5 mx-auto">
-            <p><img src="img/Alan Turing.png" alt="GFW has blcoked this picture." class="img-fluid rounded-circle"></p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section id="portfolio" class="gallery">
-      <div class="container clearfix">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="row">
-              <div class="col-md-12 col-lg-8">
-                <h2 class="heading" style="font-family:Noto Sans SC;">相册</h2>
-                <p style="font-family:Noto Sans SC;">浮光掠影。</p>
-              </div>
-            </div>
-            <div class="row">
-				<div class="col-md-4">
-                <div class="box"><a href="img/11.png" data-lightbox="image-1" data-title="Some footer information" class="has-border"><img src="img/11.png" alt="image" class="img-fluid"></a></div>
-              </div>
-				<div class="col-md-4">
-                <div class="box"><a href="img/12.png" data-lightbox="image-1" data-title="Some footer information" class="has-border"><img src="img/12.png" alt="image" class="img-fluid"></a></div>
-              </div>
-              <div class="col-md-4">
-                <div class="box"><a href="img/14.png" data-lightbox="image-1" data-title="Some footer information" class="has-border"><img src="img/14.png" alt="image" class="img-fluid"></a></div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="box"><a href="img/15.png" data-lightbox="image-1" data-title="Some footer information" class="has-border"><img src="img/15.png" alt="image" class="img-fluid"></a></div>
-              </div>
-              <div class="col-md-4">
-                <div class="box"><a href="img/16.png" data-lightbox="image-1" data-title="Some footer information" class="has-border"><img src="img/16.png" alt="image" class="img-fluid"></a></div>
-              </div>
-              <div class="col-md-4">
-                <div class="box"><a href="img/17.png" data-lightbox="image-1" data-title="Some footer information" class="has-border"><img src="img/17.png" alt="image" class="img-fluid"></a></div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="box"><a href="img/18.png" data-lightbox="image-1" data-title="Some footer information" class="has-border"><img src="img/18.png" alt="image" class="img-fluid"></a></div>
-              </div>
-              <div class="col-md-4">
-                <div class="box"><a href="img/19.png" data-lightbox="image-1" data-title="Some footer information" class="has-border"><img src="img/19.png" alt="image" class="img-fluid"></a></div>
-              </div>
-              <div class="col-md-4">
-                <div class="box"><a href="img/20.png" data-lightbox="image-1" data-title="Some footer information" class="has-border"><img src="img/20.png" alt="image" class="img-fluid"></a></div>
-              </div>
-				</div>
-              </div>
-              </div>
-            </div>
-    </section>
-    <section id="text" class="text-page section-inverse">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12">
-            <h2 class="heading" style="font-family:Noto Sans SC;">文字</h2>
-            <div class="row">
-              <div class="col-md-6">
-                <p style="font-family:Noto Sans SC;font-size:20px;">2006 年德国世界杯，第一次看世界杯，印象最深的还是阿根廷 6-0 塞黑，马拉多纳在现场激动地大喊，“梅西就是我的接班人！”C 罗也刚刚初出茅庐，我还在困惑怎么又是大罗又是小罗还有个 C 罗。一个个未来之星迭出，从内马尔到 J 罗，没人比姆巴佩更配赢。姆巴佩未来的身价完全值得巅峰梅西 + C 罗身价之和，一人扛着法国全队向冠军冲击。希望 2026 年能在美国现场观赛，到时候就不知道还能有几个我让我从小如雷贯耳的球星还在了…<br><br>
-                姆巴佩加油！<br><br>2022/12/19 02:18:00</p>
-              </div>
-              <div class="col-md-6">
-                <p><img src="img/MC.png" alt="GFW has blcoked this picture."></p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-<footer style="background-color: #111;">
-  <div class="container"> 
-        <div class="row copyright">
-          <div class="col-md-6">
-            <p class="mb-md-0 text-center text-md-left" style="font-family:Noto Sans SC;">&copy;2022-2023 杨坤&nbsp; All Rights Reserved.</p>
-          </div>
-          <div class="col-md-6">
-            <p class="credit mb-md-0 text-center text-md-right" style="font-family:Noto Sans SC;">友情链接&nbsp;&nbsp;
-			 <a href="https://ausertdream.github.io" target="_blank" style="font-family:Noto Sans SC;">Ausert&nbsp;&nbsp;</a>
-			  </p>
-          </div>
-        </div>
-      </div>
-    </footer>
-  </body>
-</html>
+# 杨坤的博客 · 星港极光
+
+> 深空即深海，极光即航迹。
+
+个人博客，部署在 [alanturing01.github.io](https://alanturing01.github.io)。2026 年 7 月由 Bootstrap 单页模板全面重构为 [Astro](https://astro.build) 静态多页站，设计主题「星港极光」。
+
+## 日常使用
+
+**写一篇新文章**：在 `src/content/posts/` 下新建一个 `.md` 文件即可，文件名就是文章的 URL（如 `my-post.md` → `/posts/my-post/`）：
+
+```markdown
+---
+title: 文章标题
+description: 一句话摘要（会显示在列表和 RSS 里）
+pubDate: 2026-07-09T20:00:00+08:00
+tags: [随笔]
+---
+
+正文，Markdown 语法。图片放到 src/assets/ 后用相对路径引用：
+![说明](../../assets/xxx.webp)
+```
+
+加 `draft: true` 可以存为草稿（不会发布）。推送到 `main` 分支后，GitHub Actions 会自动构建并部署，约一两分钟生效。
+
+**加相册照片**：放进 `src/assets/gallery/`，然后在 `src/pages/gallery.astro` 的 `photos` 数组里加一行。
+
+**加友链**：编辑 `src/pages/friends.astro` 的 `friends` 数组。
+
+**本地预览**：
+
+```bash
+npm install
+npm run dev        # http://localhost:4321
+```
+
+## 留言板评论（一次性配置）
+
+评论用 [giscus](https://giscus.app)（基于 GitHub Discussions，点击才加载）。仓库 Discussions 已开启、配置已写好，只差一步：
+
+1. 打开 <https://github.com/apps/giscus> 并点击 **Install**，选择本仓库授权即可。
+
+## 技术与安全
+
+- **Astro 7** 静态输出，零前端框架；交互只有约 200 行原生 JS。
+- **零外部依赖**：字体、图标、样式全部自托管，不请求任何 CDN——在任何网络环境下都一样快。唯一的例外是留言板的 giscus，且必须用户点击才会加载。
+- **CSP**：所有页面带 `Content-Security-Policy` meta（`default-src 'none'` 白名单制）。
+- **部署安全**：GitHub Actions 工作流按 commit SHA 锁定所有 action，权限最小化（`contents: read`）；Dependabot 每周检查依赖更新。
+- **媒体优化**：相册原图 110MB → 3.5MB（WebP），视频 224MB → 94MB（H.264 CRF 22）。原始文件都在 git 历史里，随时可找回。
+
+## 回滚
+
+旧版站点完整保留在 git 历史中。如需回滚：把 Pages 构建方式改回 legacy（Settings → Pages → Source: Deploy from a branch），然后 `git revert` 重构提交即可。
+
+## 字体版权
+
+标题用 [Space Grotesk](https://github.com/floriankarsten/space-grotesk)（SIL Open Font License 1.1），拉丁子集自托管；中文使用系统字体栈。

@@ -1,0 +1,108 @@
+---
+const year = new Date().getFullYear();
+const persona = ['FLOWER DANCE', 'INTP', 'CS 2', 'GTA V', '文明 VII', '三国杀', '足球', 'AI', '理想主义'];
+// 跑马灯无缝循环需要两份内容
+const marquee = [...persona, ...persona];
+---
+
+<footer class="site-footer">
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      {marquee.map((word) => <span class="num">{word}<i>◆</i></span>)}
+    </div>
+  </div>
+  <div class="container footer-inner">
+    <p class="copyright num">© 2022–{year} 杨坤 · All Rights Reserved.</p>
+    <ul class="footer-links">
+      <li><a href="/friends/">友链</a></li>
+      <li><a href="/rss.xml">RSS</a></li>
+      <li>
+        <a href="https://github.com/AlanTuring01/alanturing01.github.io" target="_blank" rel="noopener noreferrer">源码</a>
+      </li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 5rem;
+    border-top: 1px solid var(--border-c);
+    background: var(--bg-1);
+  }
+
+  .marquee {
+    overflow: hidden;
+    border-bottom: 1px solid var(--border-c);
+    padding-block: 0.55rem;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    gap: 0;
+  }
+
+  /* 只在可悬停设备上滚动（悬停即暂停）；键盘用户聚焦页脚链接时同样暂停 */
+  @media (hover: hover) and (pointer: fine) {
+    .marquee-track {
+      animation: marquee 36s linear infinite;
+    }
+  }
+
+  .marquee:hover .marquee-track,
+  .site-footer:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .marquee-track span {
+    font-size: var(--fs-tiny);
+    letter-spacing: 0.18em;
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+
+  .marquee-track i {
+    font-style: normal;
+    font-size: 0.5em;
+    color: var(--accent);
+    margin-inline: 1.4em;
+    vertical-align: 0.2em;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+    }
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding-block: 1.4rem;
+  }
+
+  .copyright {
+    margin: 0;
+    font-size: var(--fs-small);
+    color: var(--text-2);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--fs-small);
+  }
+</style>

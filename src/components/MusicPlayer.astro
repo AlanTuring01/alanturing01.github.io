@@ -1,0 +1,226 @@
+---
+// 星球唱片播放器：默认收起为 44px 圆盘，展开为胶囊。
+// 绝不自动播放；音频 preload="none"，首次点击播放才开始加载。
+---
+
+<div id="player" class="player glass" data-expanded="false" transition:persist="music-player">
+  <button id="player-disc" class="disc" aria-label="展开音乐播放器" aria-expanded="false">
+    <span class="disc-face" aria-hidden="true"></span>
+  </button>
+  <div class="panel">
+    <button id="player-toggle" class="play-btn" aria-label="播放背景音乐" aria-pressed="false">
+      <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M8 5v14l11-7z"></path>
+      </svg>
+      <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M6 4h4v16H6zM14 4h4v16h-4z"></path>
+      </svg>
+    </button>
+    <div class="meta">
+      <span class="track num">Flower Dance · DJ Okawari</span>
+      <span class="waves" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    </div>
+  </div>
+  <audio id="player-audio" src="/audio/FlowerDance.mp3" preload="none" loop></audio>
+</div>
+
+<style>
+  .player {
+    position: fixed;
+    right: 20px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    height: 48px;
+    border-radius: 999px;
+    padding: 2px;
+    max-width: 48px;
+    overflow: hidden;
+    transition: max-width var(--t-base) var(--ease-out), box-shadow var(--t-base) var(--ease-out);
+    box-shadow: var(--shadow-1);
+  }
+
+  .player[data-expanded='true'] {
+    max-width: 300px;
+  }
+
+  .player:hover {
+    box-shadow: var(--shadow-1), var(--shadow-glow);
+  }
+
+  .disc {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+
+  .disc-face {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at center, var(--bg-0) 0 4px, transparent 4px),
+      radial-gradient(circle at center, transparent 0 4px, rgba(255, 255, 255, 0.06) 4px 5px, transparent 5px),
+      conic-gradient(from 0deg, #1a2436, #0d1524 25%, #1a2436 50%, #0d1524 75%, #1a2436);
+    position: relative;
+  }
+
+  .disc-face::after {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    background: var(--aurora);
+  }
+
+  .player.playing .disc-face {
+    animation: spin 8s linear infinite;
+  }
+
+  .player.paused .disc-face {
+    animation: spin 8s linear infinite;
+    animation-play-state: paused;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .panel {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding-inline: 0.35rem 1rem;
+    white-space: nowrap;
+  }
+
+  .play-btn {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--border-c);
+    background: transparent;
+    color: var(--text-0);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: color var(--t-fast) var(--ease-out), border-color var(--t-fast) var(--ease-out);
+  }
+
+  .play-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .icon-pause {
+    display: none;
+  }
+
+  .player.playing .icon-pause {
+    display: block;
+  }
+
+  .player.playing .icon-play {
+    display: none;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    overflow: hidden;
+  }
+
+  .track {
+    font-size: var(--fs-tiny);
+    letter-spacing: 0.06em;
+    color: var(--text-1);
+  }
+
+  .waves {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 12px;
+  }
+
+  .waves i {
+    width: 2.5px;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent);
+    transform: scaleY(0.25);
+    transform-origin: bottom;
+  }
+
+  .player.playing .waves i {
+    animation: wave 1s var(--ease-in-out) infinite alternate;
+  }
+
+  .player.playing .waves i:nth-child(2) { animation-delay: 0.2s; }
+  .player.playing .waves i:nth-child(3) { animation-delay: 0.45s; }
+  .player.playing .waves i:nth-child(4) { animation-delay: 0.7s; }
+
+  @keyframes wave {
+    from { transform: scaleY(0.25); }
+    to { transform: scaleY(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .player.playing .disc-face,
+    .player.playing .waves i {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // transition:persist 保证跨页导航时播放不中断；脚本只需绑定一次
+  function initPlayer() {
+    const player = document.getElementById('player');
+    if (!player || player.dataset.bound) return;
+    player.dataset.bound = '1';
+
+    const disc = document.getElementById('player-disc') as HTMLButtonElement;
+    const toggle = document.getElementById('player-toggle') as HTMLButtonElement;
+    const audio = document.getElementById('player-audio') as HTMLAudioElement;
+
+    disc.addEventListener('click', () => {
+      const expanded = player.dataset.expanded !== 'true';
+      player.dataset.expanded = String(expanded);
+      disc.setAttribute('aria-expanded', String(expanded));
+      disc.setAttribute('aria-label', expanded ? '收起音乐播放器' : '展开音乐播放器');
+    });
+
+    toggle.addEventListener('click', async () => {
+      if (audio.paused) {
+        try {
+          await audio.play();
+        } catch {
+          return; // 加载失败或被浏览器拦截时保持静默
+        }
+        player.classList.add('playing');
+        player.classList.remove('paused');
+        toggle.setAttribute('aria-pressed', 'true');
+        toggle.setAttribute('aria-label', '暂停背景音乐');
+      } else {
+        audio.pause();
+        player.classList.remove('playing');
+        player.classList.add('paused');
+        toggle.setAttribute('aria-pressed', 'false');
+        toggle.setAttribute('aria-label', '播放背景音乐');
+      }
+    });
+  }
+
+  document.addEventListener('astro:page-load', initPlayer);
+</script>

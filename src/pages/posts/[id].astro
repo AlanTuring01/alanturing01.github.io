@@ -1,0 +1,275 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { zhDate } from '../../utils/date';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const all = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+);
+const idx = all.findIndex((p) => p.id === post.id);
+const prev = idx > 0 ? all[idx - 1] : null;
+const next = idx < all.length - 1 ? all[idx + 1] : null;
+
+const words = post.body ? post.body.replace(/\s/g, '').length : 0;
+---
+
+<Base title={post.data.title} description={post.data.description} ogType="article">
+  <div id="progress" aria-hidden="true"><i></i></div>
+  <article class="container-narrow">
+    <header class="post-head">
+      <p class="eyebrow">
+        <time class="num" datetime={post.data.pubDate.toISOString()}>{zhDate(post.data.pubDate)}</time>
+        <span aria-hidden="true"> · </span>
+        <span class="num">{words}</span> 字
+        {post.data.tags.length > 0 && <span aria-hidden="true"> · </span>}
+        {post.data.tags.join(' / ')}
+      </p>
+      <h1>{post.data.title}</h1>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+    <p class="fin" aria-label="全文读完">
+      <span class="fin-beacon" aria-hidden="true"></span>
+      <span class="eyebrow">FIN · 读讫</span>
+    </p>
+    <hr class="signal-divider" />
+    <nav class="post-nav" aria-label="上下篇">
+      {
+        prev ? (
+          <a class="card nav-card" href={`/posts/${prev.id}/`}>
+            <span class="eyebrow">上一篇</span>
+            <span class="nav-title">{prev.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      {
+        next ? (
+          <a class="card nav-card next" href={`/posts/${next.id}/`}>
+            <span class="eyebrow">下一篇</span>
+            <span class="nav-title">{next.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+    </nav>
+  </article>
+</Base>
+
+<style>
+  /* 极光阅读进度条 + 头部辉光点 */
+  #progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 110;
+    pointer-events: none;
+  }
+
+  #progress i {
+    display: block;
+    height: 100%;
+    background: var(--aurora);
+    transform: scaleX(var(--progress, 0));
+    transform-origin: left;
+  }
+
+  .post-head {
+    padding-block: 4rem 1rem;
+  }
+
+  .post-head h1 {
+    margin-top: 0.4em;
+  }
+
+  .post-head .eyebrow {
+    letter-spacing: 0.12em;
+  }
+
+  /* 正文排版 */
+  .prose {
+    font-size: var(--fs-body);
+    max-width: 42em;
+    text-align: justify;
+  }
+
+  .prose :global(p) {
+    margin-block: 1.25em;
+  }
+
+  .prose :global(img) {
+    border-radius: var(--r-m);
+    box-shadow: var(--shadow-1);
+  }
+
+  .prose :global(blockquote) {
+    margin: 1.5em 0;
+    padding: 0.6em 1.4em;
+    border-left: 3px solid transparent;
+    border-image: var(--aurora) 1;
+    background: var(--glass-bg);
+    border-radius: 0 var(--r-s) var(--r-s) 0;
+    color: var(--text-0);
+  }
+
+  .prose :global(blockquote p) {
+    margin-block: 0.4em;
+  }
+
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--accent);
+    background: var(--code-bg);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+  }
+
+  .prose :global(pre) {
+    background: var(--bg-1);
+    border: 1px solid var(--border-c);
+    border-radius: var(--r-m);
+    padding: 1.1em 1.3em;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+
+  .prose :global(pre code) {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  .prose :global(h2) {
+    margin-top: 2em;
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: 1.4em;
+  }
+
+  .prose :global(li) {
+    margin-block: 0.4em;
+  }
+
+  /* 读讫信号灯（ink 案嫁接的阅读仪式） */
+  .fin {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    margin-top: 3rem;
+  }
+
+  .fin-beacon {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: var(--aurora);
+    transform: rotate(45deg) scale(0);
+    transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .fin.lit .fin-beacon {
+    transform: rotate(45deg) scale(1);
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  html.no-js .fin-beacon {
+    transform: rotate(45deg) scale(1);
+  }
+
+  .post-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-block: 2rem 3rem;
+  }
+
+  .nav-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1.1rem 1.3rem;
+    background-image: none;
+  }
+
+  .nav-card.next {
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .nav-title {
+    color: var(--text-0);
+    font-weight: 600;
+  }
+
+  .nav-card:hover .nav-title {
+    color: var(--accent);
+  }
+
+  @media (max-width: 560px) {
+    .post-nav {
+      grid-template-columns: 1fr;
+    }
+
+    .nav-card.next {
+      text-align: left;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+<script>
+  // 阅读进度 + 读讫信号灯；用 AbortController 防止视图过渡导航后监听器累积
+  let progressAbort: AbortController | null = null;
+
+  function initProgress() {
+    progressAbort?.abort();
+    progressAbort = null;
+    const bar = document.getElementById('progress');
+    const fin = document.querySelector('.fin');
+    if (!bar) return;
+    progressAbort = new AbortController();
+
+    const update = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - innerHeight;
+      const p = max > 0 ? Math.min(1, scrollY / max) : 1;
+      bar.style.setProperty('--progress', String(p));
+      if (fin && p > 0.98) fin.classList.add('lit');
+    };
+
+    addEventListener('scroll', update, { passive: true, signal: progressAbort.signal });
+    update();
+
+    if (fin) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            fin.classList.add('lit');
+            io.disconnect();
+          }
+        },
+        { threshold: 1 }
+      );
+      io.observe(fin);
+      progressAbort.signal.addEventListener('abort', () => io.disconnect());
+    }
+  }
+
+  document.addEventListener('astro:page-load', initProgress);
+</script>
