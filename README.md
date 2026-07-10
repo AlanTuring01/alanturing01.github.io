@@ -1,7 +1,5 @@
 # 杨坤的博客 · 星港极光
 
-> 深空即深海，极光即航迹。
-
 个人博客，部署在 [alanturing01.github.io](https://alanturing01.github.io)。2026 年 7 月由 Bootstrap 单页模板全面重构为 [Astro](https://astro.build) 静态多页站，设计主题「星港极光」。
 
 ## 日常使用

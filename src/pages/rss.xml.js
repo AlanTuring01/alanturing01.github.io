@@ -8,7 +8,7 @@ export async function GET(context) {
 
   return rss({
     title: '杨坤的博客',
-    description: '深空即深海，极光即航迹——杨坤的随笔与文字。',
+    description: '杨坤的随笔与文字。',
     site: context.site,
     items: posts.map((post) => ({
       title: post.data.title,

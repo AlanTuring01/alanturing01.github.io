@@ -1,6 +1,7 @@
 ---
-// 星球唱片播放器：默认收起为 44px 圆盘，展开为胶囊。
-// 绝不自动播放；音频 preload="none"，首次点击播放才开始加载。
+// 星球唱片播放器：默认收起为 44px 圆盘，展开为胶囊（含音量滑杆）。
+// 打开站点即尝试自动播放；被浏览器自动播放政策拦截时，退而在用户
+// 首次交互（点击/按键）的瞬间开始。用户手动暂停过则不再自动播放。
 ---
 
 <div id="player" class="player glass" data-expanded="false" transition:persist="music-player">
@@ -20,6 +21,10 @@
       <span class="track num">Flower Dance · DJ Okawari</span>
       <span class="waves" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     </div>
+    <label class="vol">
+      <span class="visually-hidden">背景音乐音量</span>
+      <input id="player-volume" type="range" min="0" max="1" step="0.05" value="0.7" />
+    </label>
   </div>
   <audio id="player-audio" src="/audio/FlowerDance.mp3" preload="none" loop></audio>
 </div>
@@ -42,7 +47,7 @@
   }
 
   .player[data-expanded='true'] {
-    max-width: 300px;
+    max-width: 360px;
   }
 
   .player:hover {
@@ -175,6 +180,19 @@
     to { transform: scaleY(1); }
   }
 
+  .vol {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* accent-color 已在 :root 指定，range 自动跟随主题色 */
+  .vol input {
+    width: 64px;
+    height: 18px;
+    cursor: pointer;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .player.playing .disc-face,
     .player.playing .waves i {
@@ -193,7 +211,54 @@
     const disc = document.getElementById('player-disc') as HTMLButtonElement;
     const toggle = document.getElementById('player-toggle') as HTMLButtonElement;
     const audio = document.getElementById('player-audio') as HTMLAudioElement;
+    const volume = document.getElementById('player-volume') as HTMLInputElement | null;
 
+    const store = {
+      get(key: string): string | null {
+        try {
+          return localStorage.getItem(key);
+        } catch {
+          return null;
+        }
+      },
+      set(key: string, value: string) {
+        try {
+          localStorage.setItem(key, value);
+        } catch {
+          /* 隐私模式下静默 */
+        }
+      },
+    };
+
+    const setUI = (playing: boolean) => {
+      player.classList.toggle('playing', playing);
+      player.classList.toggle('paused', !playing);
+      toggle.setAttribute('aria-pressed', String(playing));
+      toggle.setAttribute('aria-label', playing ? '暂停背景音乐' : '播放背景音乐');
+    };
+
+    const start = async () => {
+      try {
+        await audio.play();
+        setUI(true);
+        return true;
+      } catch {
+        return false; // 被自动播放政策拦截或加载失败
+      }
+    };
+
+    /* 音量（iOS 忽略程序设定的 volume，滑杆在桌面端生效） */
+    const savedVol = parseFloat(store.get('volume') ?? '0.7');
+    audio.volume = Number.isFinite(savedVol) ? Math.min(1, Math.max(0, savedVol)) : 0.7;
+    if (volume) {
+      volume.value = String(audio.volume);
+      volume.addEventListener('input', () => {
+        audio.volume = parseFloat(volume.value);
+        store.set('volume', volume.value);
+      });
+    }
+
+    /* 展开/收起 */
     disc.addEventListener('click', () => {
       const expanded = player.dataset.expanded !== 'true';
       player.dataset.expanded = String(expanded);
@@ -201,25 +266,36 @@
       disc.setAttribute('aria-label', expanded ? '收起音乐播放器' : '展开音乐播放器');
     });
 
+    /* 播放/暂停：手动暂停会被记住，之后不再自动播放 */
     toggle.addEventListener('click', async () => {
       if (audio.paused) {
-        try {
-          await audio.play();
-        } catch {
-          return; // 加载失败或被浏览器拦截时保持静默
-        }
-        player.classList.add('playing');
-        player.classList.remove('paused');
-        toggle.setAttribute('aria-pressed', 'true');
-        toggle.setAttribute('aria-label', '暂停背景音乐');
+        if (await start()) store.set('musicOff', '0');
       } else {
         audio.pause();
-        player.classList.remove('playing');
-        player.classList.add('paused');
-        toggle.setAttribute('aria-pressed', 'false');
-        toggle.setAttribute('aria-label', '播放背景音乐');
+        setUI(false);
+        store.set('musicOff', '1');
       }
     });
+
+    /* 自动播放：先直接尝试；被拦截则等首次页面交互（播放器自身的操作除外，
+       避免"点播放键却被抢先触发再被自己暂停"的翻转） */
+    if (store.get('musicOff') !== '1') {
+      start().then((ok) => {
+        if (ok) return;
+        const cleanup = () => {
+          removeEventListener('pointerdown', kick, true);
+          removeEventListener('keydown', kick, true);
+        };
+        const kick = (e: Event) => {
+          if ((e.target as Element | null)?.closest?.('#player')) return;
+          cleanup();
+          if (store.get('musicOff') === '1' || !audio.paused) return;
+          void start();
+        };
+        addEventListener('pointerdown', kick, true);
+        addEventListener('keydown', kick, true);
+      });
+    }
   }
 
   document.addEventListener('astro:page-load', initPlayer);
