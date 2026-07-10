@@ -47,7 +47,7 @@
   }
 
   .player[data-expanded='true'] {
-    max-width: 360px;
+    max-width: min(372px, calc(100vw - 40px));
   }
 
   .player:hover {
@@ -102,8 +102,8 @@
   .panel {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    padding-inline: 0.35rem 1rem;
+    gap: 0.5rem;
+    padding-inline: 0.35rem 0.8rem;
     white-space: nowrap;
   }
 
@@ -141,14 +141,18 @@
   .meta {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
     overflow: hidden;
+    min-width: 0;
+    flex: 0 1 auto;
   }
 
   .track {
     font-size: var(--fs-tiny);
     letter-spacing: 0.06em;
     color: var(--text-1);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .waves {
@@ -188,7 +192,7 @@
 
   /* accent-color 已在 :root 指定，range 自动跟随主题色 */
   .vol input {
-    width: 64px;
+    width: 48px;
     height: 18px;
     cursor: pointer;
   }
