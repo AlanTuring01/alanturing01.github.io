@@ -2,7 +2,6 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import avatar from '../assets/avatar.webp';
-import wechat from '../assets/wechat.png';
 
 const interests = ['GTA 6', 'CS 2', '文明 7', '三国杀', '足球', '交朋友'];
 ---
@@ -43,7 +42,7 @@ const interests = ['GTA 6', 'CS 2', '文明 7', '三国杀', '足球', '交朋�
             <span class="eyebrow">TAP TO FLIP</span>
           </span>
           <span class="face back card">
-            <Image src={wechat} alt="杨坤的微信二维码" width={320} />
+            <img src="/img/wechat-qr.jpg" alt="杨坤的微信二维码" width="888" height="1131" loading="lazy" />
           </span>
         </button>
       </div>
