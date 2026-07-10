@@ -6,6 +6,7 @@ export async function GET(context) {
     (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
   );
 
+  const self = new URL('/rss.xml', context.site).href;
   return rss({
     title: '杨坤的博客',
     description: '杨坤的随笔与文字。',
@@ -16,6 +17,7 @@ export async function GET(context) {
       pubDate: post.data.pubDate,
       link: `/posts/${post.id}/`,
     })),
-    customData: '<language>zh-CN</language>',
+    xmlns: { atom: 'http://www.w3.org/2005/Atom' },
+    customData: `<language>zh-CN</language><atom:link href="${self}" rel="self" type="application/rss+xml"/>`,
   });
 }
