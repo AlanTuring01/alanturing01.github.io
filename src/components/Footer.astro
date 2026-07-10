@@ -1,8 +1,8 @@
 ---
 const year = new Date().getFullYear();
 const persona = ['ENTP', 'CS 2', 'GTA 6', '文明 VII', '三国杀', '足球', 'AI', '理想主义'];
-// 跑马灯无缝循环需要两份内容
-const marquee = [...persona, ...persona];
+// 无缝循环要求半条轨道 ≥ 容器宽度：重复 16 份（每份实测约 510px，半轨 ≈ 4080px，覆盖到 4K 屏）
+const marquee = Array(16).fill(persona).flat();
 ---
 
 <footer class="site-footer">
